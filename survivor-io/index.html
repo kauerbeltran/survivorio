@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>SURVIVOR.IO</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="rpg">
+<div id="wrap">
+  <canvas id="game"></canvas>
+
+  <!-- ============ HUD ============ -->
+  <div id="hud">
+    <div class="hud-left">
+      <div id="lvlBadge"><span>LV</span><b id="lvlNum">1</b></div>
+      <div class="bars">
+        <div class="bar hp"><i id="hpFill"></i><em id="hpText">100 / 100</em></div>
+        <div class="bar xp"><i id="xpGhost"></i><i id="xpFill"></i></div>
+      </div>
+    </div>
+    <div class="hud-right">
+      <div class="stats">
+        <span id="timeTxt" class="stat-time">0:00</span>
+        <span class="sep">•</span>
+        <span id="killTxt">0 kills</span>
+        <span class="sep">•</span>
+        <span id="goldTxt" class="gold">0 g</span>
+      </div>
+      <div class="btnrow">
+        <button id="musicBtn" class="icon off" title="Music">♪</button>
+        <button id="soundBtn" class="icon" title="Sound">🔊</button>
+        <button id="pauseBtn" class="icon" title="Pause (Esc)">❚❚</button>
+      </div>
+      <canvas id="minimap" width="176" height="176"></canvas>
+    </div>
+  </div>
+
+  <div id="hint">Move with <b>WASD</b> / <b>Arrows</b> — your weapon attacks automatically</div>
+  <div id="banner"></div>
+  <div id="bossBar" class="hidden"><span id="bossName">BOSS</span><i><b id="bossFill"></b></i></div>
+
+  <!-- live objective + difficulty badge -->
+  <div id="objChip" class="hidden">
+    <span id="objIcon">🎯</span>
+    <span id="objText">—</span>
+    <span id="objNum">0/0</span>
+    <i class="objbar"><b id="objFill"></b></i>
+  </div>
+  <div id="diffBadge">⚔️ Normal</div>
+
+  <!-- held weapons + ability readiness -->
+  <div id="loadout"></div>
+
+  <!-- ============ MOBILE JOYSTICK ============ -->
+  <div id="joystick"><div id="stick"></div></div>
+
+  <!-- ============ LEVEL UP ============ -->
+  <div id="levelup" class="overlay hidden">
+    <div class="panel wide">
+      <h2 class="glow">LEVEL UP!</h2>
+      <p class="sub">Level <b id="lvNum2">2</b> — choose a power</p>
+      <div id="choices"></div>
+      <div class="rowbtns">
+        <button id="rerollBtn" class="gold-btn">🎲 Reroll</button>
+        <button id="skipBtn" class="ghost">Skip</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PAUSE ============ -->
+  <div id="pauseOv" class="overlay hidden">
+    <div class="panel">
+      <h2>PAUSED</h2>
+      <p class="sub">The horde waits.</p>
+      <div class="rowbtns">
+        <button id="resumeBtn">Resume</button>
+        <button id="sheetBtn">Status</button>
+        <button id="tradeBtn">Weapons</button>
+        <button id="quitBtn" class="ghost">Quit to menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ GAME OVER ============ -->
+  <div id="overOv" class="overlay hidden">
+    <div class="panel">
+      <h2 class="danger">YOU DIED</h2>
+      <p class="sub" id="deathBy">slain by monsters</p>
+      <div class="scoreboard">
+        <div><span>TIME</span><b id="ovTime">0:00</b></div>
+        <div><span>LEVEL</span><b id="ovLevel">1</b></div>
+        <div><span>KILLS</span><b id="ovKills">0</b></div>
+        <div><span>BEST</span><b id="ovBest">0:00</b></div>
+      </div>
+      <div id="ovBuild" class="buildlist"></div>
+      <div id="ovQuests" class="buildlist"></div>
+      <div id="ovCoins"></div>
+      <div class="rowbtns">
+        <button id="reviveBtn" class="gold-btn hidden">Revive — 100 g</button>
+        <button id="againBtn">Play again</button>
+        <button id="menuBtn" class="ghost">Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CHARACTER SHEET ============ -->
+  <div id="sheetOv" class="overlay hidden">
+    <div class="panel sheet">
+      <h2 class="gold">STATUS</h2>
+      <div id="sheetBody"></div>
+      <div class="rowbtns"><button id="sheetClose">Close</button></div>
+    </div>
+  </div>
+
+  <!-- ============ MESSAGE LOG ============ -->
+  <div id="logBox"></div>
+
+  <!-- ============ MERCHANT / WEAPON TRADE ============ -->
+  <div id="tradeOv" class="overlay hidden">
+    <div class="panel wide">
+      <h2 class="gold">MERCHANT</h2>
+      <p class="sub">Weapons for the road. You may carry <b id="slotCap">2</b>.</p>
+      <div class="held" id="heldRow"></div>
+      <div class="wgrid" id="weaponGrid"></div>
+      <div class="rowbtns">
+        <button id="tradeClose">Leave</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ HUB (menu / shop / inventory / quests) ============ -->
+  <div id="menuOv" class="overlay hub">
+    <div class="hubwrap">
+      <header class="hubhead">
+        <h1 class="title">SURVIVOR<span>.IO</span></h1>
+        <div class="purse"><span class="coin"></span><b id="coinCount">0</b></div>
+      </header>
+
+      <nav class="tabs">
+        <button class="tab active" data-tab="play">⚔️ Play</button>
+        <button class="tab" data-tab="shop">🛒 Shop</button>
+        <button class="tab" data-tab="inv">🎒 Inventory</button>
+        <button class="tab" data-tab="quest">📜 Quests</button>
+        <button class="tab" data-tab="settings">⚙ Settings</button>
+      </nav>
+
+      <!-- ---------- PLAY ---------- -->
+      <section class="tabpane active" id="pane-play">
+        <h3 class="panetitle">Difficulty</h3>
+        <div class="diffs" id="diffRow"></div>
+
+        <h3 class="panetitle">Quests <small>pick up to 2</small></h3>
+        <div class="questpick" id="questPick"></div>
+
+        <h3 class="panetitle">Loadout</h3>
+        <div class="slots" id="slotRow"></div>
+        <div class="boosts" id="boostRow"></div>
+
+        <button id="playBtn" class="big">▶ PLAY</button>
+        <div class="best" id="menuBest"></div>
+      </section>
+
+      <!-- ---------- SHOP ---------- -->
+      <section class="tabpane" id="pane-shop">
+        <div class="filters" id="shopFilters"></div>
+        <div class="grid" id="shopGrid"></div>
+      </section>
+
+      <!-- ---------- INVENTORY ---------- -->
+      <section class="tabpane" id="pane-inv">
+        <h3 class="panetitle">Equipped <small id="slotCount"></small></h3>
+        <div class="slots big" id="invSlots"></div>
+        <h3 class="panetitle">Accessories</h3>
+        <div class="grid" id="invGrid"></div>
+        <h3 class="panetitle">Consumables <small>armed for your next run</small></h3>
+        <div class="grid" id="consGrid"></div>
+      </section>
+
+      <!-- ---------- QUESTS ---------- -->
+      <section class="tabpane" id="pane-quest">
+        <div class="queststats" id="questStats"></div>
+        <div class="grid" id="questGrid"></div>
+      </section>
+
+      <!-- ---------- SETTINGS ---------- -->
+      <section class="tabpane" id="pane-settings">
+        <h3 class="panetitle">Options</h3>
+        <div class="settings" id="settingsList"></div>
+        <h3 class="panetitle">Progress</h3>
+        <div class="progcard" id="progBox"></div>
+        <div class="rowbtns">
+          <button id="wipeBtn" class="ghost">Abandon all progress</button>
+        </div>
+      </section>
+
+      <footer class="hubfoot">
+        <span><b>WASD</b> move · <b>1</b><b>2</b><b>3</b> pick power · <b>Esc</b> pause</span>
+      </footer>
+    </div>
+  </div>
+</div>
+
+<script src="js/util.js" defer></script>
+<script src="js/audio.js" defer></script>
+<script src="js/meta.js" defer></script>
+<script src="js/objectives.js" defer></script>
+<script src="js/upgrades.js" defer></script>
+<script src="js/weapons.js" defer></script>
+<script src="js/rpgui.js" defer></script>
+<script src="js/game.js" defer></script>
+<script src="js/ui.js" defer></script>
+</body>
+</html>
