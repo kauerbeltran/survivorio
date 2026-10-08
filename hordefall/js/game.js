@@ -1,7 +1,7 @@
 "use strict";
 
 /* =============================================================
-   SURVIVOR.IO — canvas horde survival
+   HORDEFALL — canvas horde survival
    ============================================================= */
 
 const cv = document.getElementById("game");
@@ -240,7 +240,7 @@ function newPlayer() {
     invuln: 0, hurtCd: 0, walk: 0, dead: false, phoenix: false, phoenixUsed: false,
     upg: {},
     /* stats */
-    dmgBonus: 0, dmgPct: 0, atkPct: 0, spdPct: 0, regen: 0, armor: 0, dr: 0,
+    dmgPct: 0, atkPct: 0, spdPct: 0, regen: 0, armor: 0, dr: 0,
     crit: 0.05, critDmg: 1.6, projCount: 1, projSize: 0, pierce: 0,
     magnet: 0, xpGain: 0, goldGain: 0, chestChance: 0.08, lifesteal: 0,
     freezeChance: 0, boomDmg: 0, knock: 40, thorns: 0,
@@ -272,8 +272,6 @@ resetGame();
 
 /* ---------------- derived stats ---------------- */
 function P() { return G.player; }
-function dmgBase() { const p = P(); return (15 + p.dmgBonus) * (1 + p.dmgPct); }
-function atkRate() { return 2.6 * (1 + P().atkPct); }
 function moveSpeed() { return 215 * (1 + P().spdPct); }
 function pickupR() { return 88 * (1 + P().magnet); }
 /* Level costs grow superlinearly on purpose: player power compounds with every
@@ -522,7 +520,7 @@ function updateWeapons(dt) {
         if (e.hp > 0 && e.droneCd <= 0 && dist(e.x, e.y, px2, py2) < 22 + e.r) {
           e.droneCd = 0.3;
           const dx = e.x - px2, dy = e.y - py2, d = Math.hypot(dx, dy) || 1;
-          damageEnemy(e, p.droneDmg, { kx: dx / d, ky: dy / d, knock: 20 });
+          damageEnemy(e, p.droneDmg * (1 + p.dmgPct), { kx: dx / d, ky: dy / d, knock: 20 });
         }
       }
     }
@@ -539,7 +537,7 @@ function updateWeapons(dt) {
       for (const e of pool) if (e.hp > 0 && dist(e.x, e.y, p.x, p.y) < 430) targets.push(e);
       shuffle(targets);
       const n = Math.min(boltTargets(), targets.length);
-      const dmg = (10 + p.dmgBonus * 0.9) * (1 + p.boltDmgPct);
+      const dmg = 10 * (1 + p.dmgPct) * (1 + p.boltDmgPct);
       for (let i = 0; i < n; i++) {
         const e = targets[i];
         G.bolts.push({ x: e.x, y: e.y, t: 0, life: 0.24, seed: Math.random() * 100 });
@@ -559,7 +557,7 @@ function updateWeapons(dt) {
     if (p.novaTimer <= 0) {
       p.novaTimer = Math.max(2.6, 6.4 - nv * 0.35);
       const R = 118 * (1 + p.novaSize);
-      const dmg = (16 + p.dmgBonus) * (1 + p.novaDmgPct);
+      const dmg = 16 * (1 + p.dmgPct) * (1 + p.novaDmgPct);
       G.novas.push({ x: p.x, y: p.y, r: 8, max: R, t: 0, life: 0.42 });
       G.rings.push({ x: p.x, y: p.y, r: 10, max: R, t: 0, life: 0.42, c: "#8fd0ff" });
       cam.shake = Math.max(cam.shake, 6);
@@ -806,15 +804,14 @@ function updateBullets(dt) {
         b.hits.push(e);
         hitAny = true;
         const d = Math.hypot(dx, dy) || 1;
-        const wasCrit = Math.random() < (b.critChance || 0);
+        // damageEnemy rolls the crit itself, using b.critChance
         damageEnemy(e, b.dmg, {
           kx: dx / d, ky: dy / d, knock: b.knock || 0,
-          critChance: b.critChance || 0, forceCrit: false,
+          critChance: b.critChance || 0,
         });
         // bleed from fast weapons
         if (b.bleed && e.hp > 0) { e.bleed = 3; e.bleedDps = b.bleed; }
         fx(b.x, b.y, (dx / d) * 60, (dy / d) * 60, 0.16, b.r * 1.2, b.color || "#fff2b0", SHAPE_DOT, 0.8, true);
-        void wasCrit;
 
         if (b.kind === "splash") {
           const R = b.splash || 70;

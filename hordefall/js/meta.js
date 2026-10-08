@@ -324,7 +324,6 @@ function applyMetaToPlayer(p, diffKey) {
 
   for (const k in mods) {
     if (k === "maxHp") { p.maxHp += mods.maxHp; p.hp += mods.maxHp; }
-    else if (k === "projCount" || k === "pierce") p[k] = (p[k] || 0) + mods[k];
     else p[k] = (p[k] || 0) + mods[k];
   }
   if (run.maxHpPct) { const add = Math.round(p.maxHp * run.maxHpPct); p.maxHp += add; p.hp += add; }

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HORDEFALL</title>
+<meta name="description" content="HORDEFALL — a dependency-free horde survival roguelite that runs in any modern browser." />
+<meta property="og:title" content="HORDEFALL" />
+<meta property="og:description" content="Survive the swarm. Level up, pick a power, keep the horde off you as long as you can." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>&#9876;</text></svg>" />
+<style>
+  :root { --gold: #c9a227; --gold-hi: #f0d76a; --parch: #e8d9b5; --blood: #a8322a; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: grid; place-content: center; justify-items: center; gap: 16px;
+    text-align: center; padding: 24px;
+    background: radial-gradient(ellipse at 50% -10%, rgba(120, 92, 40, .28), transparent 60%), #0b0906;
+    color: var(--parch);
+    font-family: Georgia, "Times New Roman", serif;
+  }
+  h1 {
+    margin: 0; font-size: clamp(30px, 7vw, 54px); font-weight: 700; letter-spacing: .14em;
+    color: var(--gold-hi); text-shadow: 0 2px 0 #000, 0 0 22px rgba(201, 162, 39, .35);
+  }
+  h1 span { color: var(--blood); }
+  p { margin: 0; max-width: 46ch; font-size: 14px; line-height: 1.6; color: #a8977a; }
+  a.cta {
+    display: inline-block; margin-top: 6px; padding: 13px 30px;
+    border: 1px solid var(--gold); border-radius: 3px;
+    background: linear-gradient(180deg, #6b5a34, #3d3218); color: var(--parch);
+    text-decoration: none; font-weight: 700; letter-spacing: .1em;
+    box-shadow: inset 0 1px 0 rgba(240, 215, 106, .25), 0 3px 0 #201a0d;
+  }
+  a.cta:hover { background: linear-gradient(180deg, #857044, #4c3f20); }
+  noscript a { color: var(--gold-hi); }
+</style>
+</head>
+<body>
+  <h1>HORDE<span>FALL</span></h1>
+  <p>A horde survival roguelite. Your weapon attacks on its own — every kill drops XP, every level
+     hands you a choice. Keep the swarm off you as long as you can.</p>
+  <!-- Works with scripting off too; the meta refresh covers the common case. -->
+  <a class="cta" href="hordefall/index.html">ENTER THE FALL</a>
+  <noscript><p>Your browser blocked the automatic redirect. Use the link above.</p></noscript>
+  <script>location.replace("hordefall/index.html");</script>
+</body>
+</html>

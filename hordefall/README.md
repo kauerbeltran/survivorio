@@ -1,11 +1,11 @@
-# SURVIVOR.IO
+# HORDEFALL
 
-A complete, dependency-free **survivor.io-style** horde survival game that runs in any modern
+A complete, dependency-free horde survival roguelite that runs in any modern
 browser. Move with WASD/arrows, your weapon fires automatically, and every monster you kill
 drops XP. Level up, pick a power, keep the horde off you as long as you can.
 
 ```
-survivor-io/
+hordefall/
 ├── index.html      markup, HUD, hub (menu / shop / inventory / quests / settings)
 ├── style.css       classic-RPG theme (stone, parchment, gold)
 └── js/
@@ -13,7 +13,7 @@ survivor-io/
     ├── audio.js    WebAudio synth (SFX + ambient music, zero assets)
     ├── meta.js     save file, accessories, difficulty, quest catalogue
     ├── objectives.js run counters, quest + rolling objective tracking
-    ├── upgrades.js 27 in-run power-ups with rarity weighting
+    ├── upgrades.js 26 in-run power-ups with rarity weighting
     ├── weapons.js  9 purchasable weapons, abilities, the wandering merchant
     ├── rpgui.js    character sheet + message log
     ├── game.js     engine: player, enemies, XP, rendering
@@ -28,7 +28,7 @@ dependencies, works offline from `file://`.
 Prefer a local server (optional):
 
 ```bash
-npx serve survivor-io
+npx serve hordefall
 ```
 
 ## Controls
@@ -112,7 +112,7 @@ Dragon Quest dialogue box.
 ## Features
 
 - **Auto-attack combat** — projectiles, knockback, crits, pierce, multishot.
-- **27 upgrades** across 4 rarities: damage, attack speed, move speed, max HP, regen, armor,
+- **26 upgrades** across 4 rarities: damage, attack speed, move speed, max HP, regen, armor,
   damage reduction, crit, magnet, XP/gold gain, lifesteal, thorns, frost, explosive kills,
   knockback, and a one-time Phoenix revive.
 - **3 unlockable weapons** — orbiting drones, chain lightning, and shockwave novas.

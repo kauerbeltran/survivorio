@@ -10,13 +10,11 @@
 /* Derived entirely from the live player stat block - never hardcoded. */
 function sheetStats() {
   const p = P();
-  const dps = Armory.defs().reduce((a, w) => a + Armory.weaponDamage(w) / w.cd, 0);
-  const mods = Meta.equippedMods();
+  const dps = Armory.defs().reduce((a, w) => a + Armory.weaponDamage(w) / Armory.weaponCooldown(w), 0);
   return {
     level: p.level,
     hp: p.hp, maxHp: p.maxHp,
     xp: p.xp, xpNeed: p.xpNeed,
-    dmg: Math.round(dps),
     atk: Math.round(p.dmgPct * 100),
     def: Math.round(p.armor + Armory.grantedDr() * 100 + p.dr * 100),
     spd: Math.round(p.spdPct * 100),
@@ -76,7 +74,7 @@ function renderSheet() {
   const stat = (name, val, hint) =>
     `<div class="stat"><span>${name}</span><b>${val}</b>${hint ? `<em>${hint}</em>` : ""}</div>`;
   grid.innerHTML =
-    stat("ATTACK", s.dmg + "%", "of base") +
+    stat("ATTACK", s.atk + "%", "of base") +
     stat("DEFENCE", s.def + "%", "damage cut") +
     stat("SPEED", s.spd + "%", "movement") +
     stat("CRIT", s.crit + "%", "chance") +
@@ -91,7 +89,7 @@ function renderSheet() {
     `<div class="dollslot"><span class="dl">${label}</span>${content}</div>`;
   const wA = s.weapons[0], wB = s.weapons[1];
   eq.innerHTML =
-    `<div class="dollhead">WIELDING</div>` +
+    `<div class="dollhead">WIELDING &middot; ${s.weaponDps} DPS</div>` +
     slotRow("MAIN HAND", wA ? `<b>${wA.w.icon} ${wA.w.name}</b><em>lv ${wA.lv}/${wA.w.max}</em>` : `<b>—</b>`) +
     slotRow("OFF HAND", wB ? `<b>${wB.w.icon} ${wB.w.name}</b><em>lv ${wB.lv}/${wB.w.max}</em>` : `<b>—</b>`) +
     slotRow("CHARMS", s.accessories.length

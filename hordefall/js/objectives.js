@@ -108,9 +108,6 @@ const Run = {
   objectiveProgress() {
     const o = this.objective;
     if (!o) return null;
-    if (o.type === "time" || o.type === "nodmg") {
-      return { cur: Math.min(o.progress, o.goal), goal: o.goal, pct: clamp(o.progress / o.goal, 0, 1) };
-    }
     return { cur: Math.min(o.progress, o.goal), goal: o.goal, pct: clamp(o.progress / o.goal, 0, 1) };
   },
 

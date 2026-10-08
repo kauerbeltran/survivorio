@@ -149,7 +149,6 @@ function renderShop() {
 
   const grid = el("shopGrid");
   grid.innerHTML = "";
-  const D = DIFFS[Meta.data.difficulty];
 
   const items = SHOP.concat(CONSUMABLES).filter((it) => {
     if (Shop.filter === "all") return true;
@@ -197,7 +196,6 @@ function renderShop() {
     card.appendChild(btn);
     grid.appendChild(card);
   }
-  void D;
 }
 
 /* ---------------- inventory ---------------- */
@@ -337,7 +335,6 @@ function closeTrade() {
 
 function renderTrade() {
   el("slotCap").textContent = LOADOUT_SLOTS;
-  el("goldTrade") && (el("goldTrade").textContent = G.gold);
 
   // held slots
   const held = el("heldRow");

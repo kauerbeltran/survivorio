@@ -126,6 +126,14 @@ const Armory = {
     return d * (1 + (p.dmgPct || 0));
   },
 
+  /* attack speed shortens the cooldown of whatever is actually held, the same
+     way weaponDamage applies damage scaling, so Agility and Hunter's Bow move
+     the real fire rate. Orbit weapons are exempt: their rate comes from the
+     blade rotation in updateArmory, not from a per-shot cooldown. */
+  weaponCooldown(w) {
+    return w.cd / (1 + (P().atkPct || 0));
+  },
+
   /* extra projectiles / pierce granted by upgrades, per weapon */
   shotStats(w) {
     const p = P();
@@ -185,11 +193,13 @@ const Armory = {
   },
 
   replaceHeld(id) {
-    // weakest damage-per-second held weapon makes way
+    // weakest damage-per-second held weapon makes way. DPS is damage per
+    // cooldown, and both halves go through the scaling getters so an
+    // attack-speed build ranks on its real fire rate.
     let worst = 0, worstScore = Infinity;
     for (let i = 0; i < this.order.length; i++) {
       const w = WEAPON_BY_ID[this.order[i]];
-      const score = w.cd / (1 / this.weaponDamage(w));
+      const score = this.weaponDamage(w) / this.weaponCooldown(w);
       if (score < worstScore) { worstScore = score; worst = i; }
     }
     this.order[worst] = id;
@@ -415,7 +425,7 @@ function updateArmory(dt) {
     if (w.kind === "orbit") continue;
     p.weaponCd[w.id] = (p.weaponCd[w.id] || 0) - dt;
     if (p.weaponCd[w.id] <= 0) {
-      p.weaponCd[w.id] = w.cd;
+      p.weaponCd[w.id] = Armory.weaponCooldown(w);
       fireWeapon(w);
     }
   }
